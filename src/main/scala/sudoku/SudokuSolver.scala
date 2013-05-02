@@ -49,7 +49,7 @@ object SudokuSolver {
       if (filledIn.solved) {
         Some(filledIn)
       } else {
-        val optionGrid = guess(filledIn).map(solve).find(_.isDefined)
+        val optionGrid = guess(filledIn).view.map(solve).find(_.isDefined)
         optionGrid match {
           case Some(grid) => grid
           case None => None
