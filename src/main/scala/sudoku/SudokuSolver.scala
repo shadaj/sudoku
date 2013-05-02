@@ -5,16 +5,19 @@ import scala.annotation.tailrec
 object SudokuSolver {
   @tailrec
   def fillInKnown(data: Grid): Grid = {
-    val optionCoordinates = (0 until data.completeSides).zip(0 until data.completeSides).find(t => data.possibleValues(t._1, t._2) == 1)
-    
-    optionCoordinates match {
-      case Some(coordinates) => {
-        val possibilities = data.possibleValues(coordinates._1, coordinates._2)
-        
-        fillInKnown(data.updated(coordinates._1, coordinates._2, Some(possibilities.head)))
+    val possibleCoordinates = (0 until data.completeSides).zip(0 until data.completeSides).filter(t => data.possibleValues(t._1, t._2) == 1)
+
+    if (possibleCoordinates.length == 0) {
+      data
+    } else {
+      var soFar = data
+
+      possibleCoordinates.foreach { coordinates =>
+        val possibilities = soFar.possibleValues(coordinates._1, coordinates._2)
+
+        soFar = soFar.updated(coordinates._1, coordinates._2, Some(possibilities.head))
       }
-      
-      case None => data
+      fillInKnown(soFar)
     }
   }
 
