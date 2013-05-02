@@ -1,0 +1,8 @@
+.cache
+.classpath
+.metadata/
+.project
+.settings/
+project/project/
+project/target/
+target/
