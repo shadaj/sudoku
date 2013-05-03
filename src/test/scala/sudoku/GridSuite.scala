@@ -35,19 +35,35 @@ class GridSuite extends FunSuite with SudokuPuzzles {
       assert(sudoku1.block(2, 2).length === 9)
     }
     
+    def originalValuesUnchanged(original: Grid, solved: Grid) {
+      for (x <- 0 until 9; y <- 0 until 9) {
+        if (original(x,y).isDefined) {
+          assert(original(x,y).get === solved(x,y).get)
+        }
+      }
+    }
+    
     test("sudokuLevel1") {
-      assert(SudokuSolver.solve(sudoku1).get.solved)
+      val solved = SudokuSolver.solve(sudoku1).get
+      originalValuesUnchanged(sudoku1, solved)
+      assert(solved.solved)
     }
     
     test("sudokuLevel2") {
-      assert(SudokuSolver.solve(sudoku2).get.solved)
+      val solved = SudokuSolver.solve(sudoku2).get
+      originalValuesUnchanged(sudoku2, solved)
+      assert(solved.solved)
     }
     
     test("sudokuLevel3") {
-      assert(SudokuSolver.solve(sudoku3).get.solved)
+      val solved = SudokuSolver.solve(sudoku3).get
+      originalValuesUnchanged(sudoku3, solved)
+      assert(solved.solved)
     }
     
     test ("sudokuLevel4") {
-      assert(SudokuSolver.solve(sudoku4).get.solved)
+      val solved = SudokuSolver.solve(sudoku4).get
+      originalValuesUnchanged(sudoku4, solved)
+      assert(solved.solved)
     }
 }

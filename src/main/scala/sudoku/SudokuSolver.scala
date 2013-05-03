@@ -1,32 +1,23 @@
 package sudoku
 
 import scala.annotation.tailrec
+import Cells._
 
 object SudokuSolver {
   @tailrec
   def fillInKnown(data: Grid): Grid = {
-    val possibleCoordinates = (0 until data.completeSides).zip(0 until data.completeSides).filter(t => data.possibleValues(t._1, t._2) == 1)
-
-    if (possibleCoordinates.length == 0) {
-      data
-    } else {
-      var soFar = data
-
-      possibleCoordinates.foreach { coordinates =>
-        val possibilities = soFar.possibleValues(coordinates._1, coordinates._2)
-
-        soFar = soFar.updated(coordinates._1, coordinates._2, Some(possibilities.head))
-      }
-      fillInKnown(soFar)
+    val possibleCoordinates = (0 until data.completeSides).flatMap(x => (0 until data.completeSides).map(y => (x,y)))
+    
+    val coordinatesToFill = possibleCoordinates.view.map{case (x,y) => (x,y,data.possibleValues(x, y))}.collectFirst {
+      case (x,y,possibleValues) if (possibleValues.length == 1) => (x,y,possibleValues.head)
     }
-  }
-
-  def canFillInKnown(data: Grid): Boolean = {
-    (0 until data.completeSides).exists { y =>
-      (0 until data.completeSides).exists { x =>
-        val possibilities = data.possibleValues(x, y)
-        possibilities.length == 1
+    
+    coordinatesToFill match {
+      case Some((x,y,value)) => {
+        fillInKnown(data.updated(x, y, value))
       }
+      
+      case None => data
     }
   }
 
@@ -37,7 +28,7 @@ object SudokuSolver {
     val possibilities = data.possibleValues(x, y)
 
     possibilities.map { p =>
-      data.updated(x, y, Some(p))
+      data.updated(x, y, p)
     }
   }
 
