@@ -79,14 +79,17 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
   def correct: Boolean = check(_.isDefined)
 
   override def toString = {
-    data.map { line =>
-      val stringMade = line.map { c =>
-        c match {
-          case Some(i) => i.toString
-          case _ => " "
-        }
-      }.mkString("|")
-      "|" + stringMade + "|"
-    }
-  }.mkString("\n")
+    data.grouped(3).map { g =>
+      g.map { l =>
+        l.grouped(3).map { bg =>
+          bg.map { c =>
+            c match {
+              case Some(value) => value
+              case _ => "."
+            }
+          }.mkString(" ")
+        }.mkString("|")
+      }.mkString("\n")
+    }.mkString("\n-----+-----+-----\n")
+  }
 }

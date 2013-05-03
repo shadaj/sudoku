@@ -44,6 +44,7 @@ class GridSuite extends FunSuite with SudokuPuzzles {
     }
     
     test("sudokuLevel1") {
+      println(sudoku1)
       val solved = SudokuSolver.solve(sudoku1).get
       originalValuesUnchanged(sudoku1, solved)
       assert(solved.solved)

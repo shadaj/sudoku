@@ -5,18 +5,18 @@ import Cells._
 
 object SudokuSolver {
   @tailrec
-  def fillInKnown(data: Grid): Grid = {
-    val possibleCoordinates = (0 until data.completeSides).flatMap(x => (0 until data.completeSides).map(y => (x,y)))
-    
-    val coordinatesToFill = possibleCoordinates.view.map{case (x,y) => (x,y,data.possibleValues(x, y))}.collectFirst {
-      case (x,y,possibleValues) if (possibleValues.length == 1) => (x,y,possibleValues.head)
+  def fill(data: Grid): Grid = {
+    val possibleCoordinates = (0 until data.completeSides).flatMap(x => (0 until data.completeSides).map(y => (x, y)))
+
+    val coordinatesToFill = possibleCoordinates.view.map { case (x, y) => (x, y, data.possibleValues(x, y)) }.collectFirst {
+      case (x, y, possibleValues) if (possibleValues.length == 1) => (x, y, possibleValues.head)
     }
-    
+
     coordinatesToFill match {
-      case Some((x,y,value)) => {
-        fillInKnown(data.updated(x, y, value))
+      case Some((x, y, value)) => {
+        fill(data.updated(x, y, value))
       }
-      
+
       case None => data
     }
   }
@@ -33,18 +33,14 @@ object SudokuSolver {
   }
 
   def solve(data: Grid): Option[Grid] = {
-    if (!data.correct) {
-      None
+    val filledIn = fill(data)
+    if (filledIn.solved) {
+      Some(filledIn)
     } else {
-      val filledIn = fillInKnown(data)
-      if (filledIn.solved) {
-        Some(filledIn)
-      } else {
-        val optionGrid = guess(filledIn).view.map(solve).find(_.isDefined)
-        optionGrid match {
-          case Some(grid) => grid
-          case None => None
-        }
+      val optionGrid = guess(filledIn).view.map(solve).find(_.isDefined)
+      optionGrid match {
+        case Some(grid) => grid
+        case None => None
       }
     }
   }

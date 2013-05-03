@@ -36,61 +36,13 @@ class CrazySudokuSuite extends FunSuite {
       }
     }
   }
-  
-  val hardSource = Source.fromFile("sudokuHard.txt")
-  
-  val hardLines = hardSource.getLines
-  
-  val hardParsedLines = hardLines.map { s =>
-    s.grouped(9).toIndexedSeq.map { l =>
-      l.toIndexedSeq.map { c =>
-        c match {
-          case '.' => None
-          case other => Some(other.asDigit)
-        }
-      }
-    }
-  }
-  
-  val hardGrids = hardParsedLines.map(new Grid(_, 3, 3)).toIndexedSeq
-  
+
+  val hardGrids = OneLineDotParser.parse("sudokuHard.txt")
+
   test("hard grids") {
     currentGrid = 1
     assert {
       hardGrids.forall { t =>
-        println("Solving " + currentGrid)
-        val solved = SudokuSolver.solve(t)
-        println("Solved " + currentGrid)
-
-        currentGrid += 1
-
-        solved.get.solved
-      }
-    }
-  }
-  
-  val superHardSource = Source.fromFile("sudoku17.txt")
-  
-  val superHardLines = superHardSource.getLines
-  
-  val superHardParsedLines = superHardLines.map { s =>
-    s.grouped(9).toIndexedSeq.map { l =>
-      l.toIndexedSeq.map { c =>
-        c match {
-          case '0' => None
-          case other => Some(other.asDigit)
-        }
-      }
-    }
-  }
-  
-  val superHardGrids = superHardParsedLines.map(new Grid(_, 3, 3)).toIndexedSeq
-  
-  test("super hard grids") {
-    currentGrid = 1
-    assert {
-      superHardGrids.forall { t =>
-        println(t)
         println("Solving " + currentGrid)
         val solved = SudokuSolver.solve(t)
         println("Solved " + currentGrid)
