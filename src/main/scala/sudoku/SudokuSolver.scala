@@ -6,8 +6,8 @@ import Cells._
 object SudokuSolver {
   @tailrec
   def fill(data: Grid): Grid = {
-    val possibleCoordinates = (0 until data.completeSides).flatMap(x => (0 until data.completeSides).map(y => (x, y)))
-
+    val possibleCoordinates = for (x <- 0 until data.size; y <- 0 until data.size) yield (x, y)
+    
     val coordinatesToFill = possibleCoordinates.view.map { case (x, y) => (x, y, data.possibleValues(x, y)) }.collectFirst {
       case (x, y, possibleValues) if (possibleValues.length == 1) => (x, y, possibleValues.head)
     }
@@ -16,15 +16,16 @@ object SudokuSolver {
       case Some((x, y, value)) => {
         fill(data.updated(x, y, value))
       }
-
       case None => data
     }
   }
 
   def guess(data: Grid): Seq[Grid] = {
-    val allCoordinates = for (x <- (0 until data.completeSides); y <- (0 until data.completeSides)) yield (x, y)
-    val emptyCellOption = allCoordinates.find { case (x, y) => !data(x, y).isDefined }
-    val (x, y) = emptyCellOption.get //There will always be a value since a puzzle with all values filled in is either incorrect or solved
+    val allCoordinates = for (x <- 0 until data.size; y <- 0 until data.size) yield (x, y)
+    
+    //There will always be a value since a puzzle with all values filled in is either incorrect or solved
+    val Some((x,y)) = allCoordinates.collectFirst { case c@(x, y) if (!data(x, y).isDefined) => c }
+    
     val possibilities = data.possibleValues(x, y)
 
     possibilities.map { p =>
@@ -37,11 +38,7 @@ object SudokuSolver {
     if (filledIn.solved) {
       Some(filledIn)
     } else {
-      val optionGrid = guess(filledIn).view.map(solve).find(_.isDefined)
-      optionGrid match {
-        case Some(grid) => grid
-        case None => None
-      }
+      guess(filledIn).view.map(solve).collectFirst{case Some(grid) => grid}
     }
   }
 }

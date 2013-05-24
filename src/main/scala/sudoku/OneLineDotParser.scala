@@ -19,6 +19,6 @@ object OneLineDotParser extends Parser {
       }
     }
     
-    parsedLines.map(g => new Grid(g,9,9))
+    parsedLines.map(g => new Grid(g,3,3))
   }
 }

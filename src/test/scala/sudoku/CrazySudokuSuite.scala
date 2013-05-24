@@ -28,7 +28,7 @@ class CrazySudokuSuite extends FunSuite {
     assert {
       easyGrids.par.forall { t =>
         val solved = SudokuSolver.solve(t)
-        println("Solved " + currentGrid)
+//        println("Solved " + currentGrid)
 
         currentGrid += 1
 
@@ -37,15 +37,15 @@ class CrazySudokuSuite extends FunSuite {
     }
   }
 
-  val hardGrids = OneLineDotParser.parse("sudokuHard.txt")
+  val hardGrids = OneLineDotParser.parse("sudokuHard.txt").take(3)
 
   test("hard grids") {
     currentGrid = 1
     assert {
       hardGrids.forall { t =>
-        println("Solving " + currentGrid)
+//        println("Solving " + currentGrid)
         val solved = SudokuSolver.solve(t)
-        println("Solved " + currentGrid)
+//        println("Solved " + currentGrid)
 
         currentGrid += 1
 

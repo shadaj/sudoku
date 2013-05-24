@@ -26,10 +26,10 @@ class AreYouMadSudokuSuite extends FunSuite {
   test("super hard grids") {
     currentGrid = 1
     assert {
-      superHardGrids.forall { t =>
-        println("Solving " + currentGrid)
+      superHardGrids.take(100).forall { t =>
+//        println("Solving " + currentGrid)
         val solved = SudokuSolver.solve(t)
-        println("Solved " + currentGrid)
+//        println("Solved " + currentGrid)
 
         currentGrid += 1
 

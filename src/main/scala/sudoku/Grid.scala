@@ -4,9 +4,9 @@ import Cells._
 import collection.mutable
 
 class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
-  val completeSides = boxWidth * boxHeight
-  val boxesInWidth = completeSides / boxWidth
-  val boxesInHeight = completeSides / boxHeight
+  val size = boxWidth * boxHeight
+  val boxesInWidth = size / boxWidth
+  val boxesInHeight = size / boxHeight
 
   def updated(x: Int, y: Int, value: Cell) = {
     new Grid(data.updated(y, data(y).updated(x, value)), boxWidth, boxHeight)
@@ -16,12 +16,12 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
     data(y)(x)
   }
 
-  def column(num: Int): IndexedSeq[Cell] = {
-    data.map(_(num))
+  def column(x: Int): IndexedSeq[Cell] = {
+    data.map(_(x))
   }
 
-  def row(num: Int): IndexedSeq[Cell] = {
-    data(num)
+  def row(y: Int): IndexedSeq[Cell] = {
+    data(y)
   }
 
   private[sudoku] def block(blockX: Int, blockY: Int): IndexedSeq[Cell] = {
@@ -43,7 +43,7 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
         val block = blockFor(x, y)
         val rowNums = this row y
         val columnNums = this column x
-        (1 to completeSides).filter(n =>
+        (1 to size).filter(n =>
           !block.contains(Some(n)) &&
             !rowNums.contains(Some(n)) &&
             !columnNums.contains(Some(n)))
@@ -51,11 +51,11 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
     }
   }
 
-  def check(filtering: Cell => Boolean) = {
-    def check(values: IndexedSeq[Cell]) = {
+  private def check(filtering: Cell => Boolean) = {
+    def helper(values: IndexedSeq[Cell]) = {
       values.forall {
         _ match {
-          case Some(e) => e >= 1 && e <= completeSides
+          case Some(e) => e >= 1 && e <= size
           case _ => true
         }
       } && values.filter(filtering).length == values.filter(filtering).distinct.length
@@ -63,12 +63,12 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
 
     val blocksChecked = (0 until boxesInWidth).forall { x =>
       (0 until boxesInHeight).forall { y =>
-        check(block(x, y))
+        helper(block(x, y))
       }
     }
 
-    val rowsAndColumnsChecked = (0 until completeSides).forall {
-      i => check(column(i)) && check(row(i))
+    val rowsAndColumnsChecked = (0 until size).forall {
+      i => helper(column(i)) && helper(row(i))
     }
 
     blocksChecked && rowsAndColumnsChecked
