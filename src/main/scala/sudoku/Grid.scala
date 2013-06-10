@@ -36,9 +36,9 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
     block(blockX, blockY)
   }
 
-  def possibleValues(x: Int, y: Int) = {
+  def possibleValues(x: Int, y: Int): IndexedSeq[Int] = {
     this(x, y) match {
-      case Some(_) => List.empty
+      case Some(_) => IndexedSeq.empty
       case None => {
         val block = blockFor(x, y)
         val rowNums = this row y
@@ -51,32 +51,7 @@ class Grid(data: IndexedSeq[IndexedSeq[Cell]], boxWidth: Int, boxHeight: Int) {
     }
   }
 
-  private def check(filtering: Cell => Boolean) = {
-    def helper(values: IndexedSeq[Cell]) = {
-      values.forall {
-        _ match {
-          case Some(e) => e >= 1 && e <= size
-          case _ => true
-        }
-      } && values.filter(filtering).length == values.filter(filtering).distinct.length
-    }
-
-    val blocksChecked = (0 until boxesInWidth).forall { x =>
-      (0 until boxesInHeight).forall { y =>
-        helper(block(x, y))
-      }
-    }
-
-    val rowsAndColumnsChecked = (0 until size).forall {
-      i => helper(column(i)) && helper(row(i))
-    }
-
-    blocksChecked && rowsAndColumnsChecked
-  }
-
-  def solved: Boolean = check(_ => true)
-
-  def correct: Boolean = check(_.isDefined)
+  def solved: Boolean = data.flatten.forall(_.isDefined)
 
   override def toString = {
     data.grouped(3).map { g =>

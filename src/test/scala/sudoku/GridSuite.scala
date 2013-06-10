@@ -10,11 +10,7 @@ trait SudokuPuzzles {
       line.toIndexedSeq
     }.toIndexedSeq
     val grid = new Grid(commaSplit.map(_.map(t => if (t == ' ') None else Some(t.asDigit))), 3, 3)
-    if (!grid.correct) {
-      throw new IllegalArgumentException("Bad Grid")
-    } else {
-      grid
-    }
+    grid
   }
 
   val sudoku1 = loadSudoku("sudokuLevel1")
